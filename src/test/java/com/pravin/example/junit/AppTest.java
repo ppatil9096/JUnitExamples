@@ -5,17 +5,27 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runners.model.TestTimedOutException;
+import org.junit.rules.TemporaryFolder;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for simple App.
  */
 public class AppTest {
+
+    @Rule
+    public TemporaryFolder tempFolder = new TemporaryFolder();
+
     /**
      * Rigorous Test
      */
@@ -90,10 +100,19 @@ public class AppTest {
             Thread.sleep(1000);
         }
     }
+
     /**
      * We can use @Rule for class level timeouts.
      * Note : @Rule applies on @Before and @After methods as well. So use it carefully.
      * @Rule
      * public Timeout globalTimeout = Timeout.seconds(2);
      */
+
+    @Test
+    public void testTempFolderOrFileAutoDeletion() throws IOException {
+        final File tempFile = tempFolder.newFile("tempFile.txt");
+        Files.writeString(Path.of(String.valueOf(tempFile)), "hello world");
+        final String s = Files.readString(Path.of(String.valueOf(tempFile)));
+        assertEquals("hello world", s);
+    }
 }
